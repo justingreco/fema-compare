@@ -624,20 +624,20 @@ function clearAllInfo () {
 	proposed.sync(current);
 
 
-	var layerC = L.tileLayer('http://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png', {
+	var layerC = L.tileLayer('http://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png', {
 		attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, &copy; <a href="http://cartodb.com/attributions">CartoDB</a>'
 	});
 	current.addLayer(layerC);
 
-	var layerP = L.tileLayer('http://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png', {
+	var layerP = L.tileLayer('http://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png', {
 		attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, &copy; <a href="http://cartodb.com/attributions">CartoDB</a>'
 	});
 	proposed.addLayer(layerP);
 
 	addMapClick();
 
-	L.esri.dynamicMapLayer(config.parcels.url, {opacity: 0.20, layers: [0,1], position: 'back'}).addTo(current);
-	L.esri.dynamicMapLayer(config.parcels.url, {opacity: 0.20, layers: [0,1], position: 'back'}).addTo(proposed);
+	L.esri.dynamicMapLayer(config.parcels.url, {opacity: 0.2, layers: [0,1], position: 'back'}).addTo(current);
+	L.esri.dynamicMapLayer(config.parcels.url, {opacity: 0.2, layers: [0,1], position: 'back'}).addTo(proposed);
 	var currentLayer = L.esri.dynamicMapLayer(config.current.url, {opacity: 0.50, layers:[1]}).addTo(current);
 	var prelimLayer = L.esri.dynamicMapLayer(config.preliminary.url, {opacity: 0.50, layers: [1]}).addTo(proposed);
 	//var overlayCurrent = L.esri.dynamicMapLayer(config.overlays.url, {opacity: 1});//.addTo(current);
