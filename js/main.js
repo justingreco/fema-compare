@@ -622,8 +622,17 @@ function clearAllInfo () {
 
 	current.sync(proposed);
 	proposed.sync(current);
-	L.esri.basemapLayer("Topographic").addTo(current);
-	L.esri.basemapLayer("Topographic").addTo(proposed);
+
+
+	var layerC = L.tileLayer('http://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png', {
+		attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, &copy; <a href="http://cartodb.com/attributions">CartoDB</a>'
+	});
+	current.addLayer(layerC);
+
+	var layerP = L.tileLayer('http://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png', {
+		attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, &copy; <a href="http://cartodb.com/attributions">CartoDB</a>'
+	});
+	proposed.addLayer(layerP);
 
 	addMapClick();
 
