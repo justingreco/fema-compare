@@ -139,6 +139,22 @@
 	margin-bottom: 0px;
 }
 
+#legend {
+	box-shadow: 0 8px 16px -8px #222222;
+}
+
+#legend .lead {
+	text-align: center;
+	margin-bottom: 1em;
+}
+.legend-item {
+	height: 45px;
+}
+.legend-item img {
+  float: left;
+  margin-right: 10px;
+  padding-bottom: 1.5em;
+}
 .footer {
   margin-top: 40px;
   background-color: #2B3856;
@@ -211,6 +227,9 @@ h4 small {
 	.footer img{
 		margin-top: 20px;
 		margin-bottom: 20px;
+	}
+	.legend-item {
+		min-height: 70px;
 	}
 	#addressAlert {
 		display: none;

@@ -36,7 +36,8 @@ $(document).ready(function () {
 		info = {},
 		propGj,
 		currentInfo = [],
-		prelimInfo = [];
+		prelimInfo = [],
+		legend = {};
 
 	function setMapView(point) {
 		current.setView([point.y, point.x], 16);
@@ -612,6 +613,28 @@ function clearAllInfo () {
 		//feedbackLayer.addTo(proposed)
 	}
 
+	function buildLegend (legend) {
+		var div = $(".legend-col"),
+			idx = 0;
+		$(legend).each(function (i, layer) {
+			idx = (i < 6) ? 0 : 1;
+			$(div[idx]).append("<div class='legend-item'><img src='data:image/png;base64," + layer.imageData +"' alt=''/><span>"+ layer.label +"</span></div>");
+		});
+	}
+
+	function getLegend(url) {
+		return $.ajax({
+			url: url + '/legend',
+			type: 'GET',
+			dataType: 'json',
+			data: {f: 'json'},
+		})
+		.done(function(data) {
+				legend = data.layers[1].legend;
+				buildLegend(legend);
+		});
+	}
+
 	$("#closeWarning").click(function () {
 		$(".browser-warning").hide();
 	});
@@ -640,6 +663,9 @@ function clearAllInfo () {
 	L.esri.dynamicMapLayer(config.parcels.url, {opacity: 0.2, layers: [0,1], position: 'back'}).addTo(proposed);
 	var currentLayer = L.esri.dynamicMapLayer(config.current.url, {opacity: 0.50, layers:[1]}).addTo(current);
 	var prelimLayer = L.esri.dynamicMapLayer(config.preliminary.url, {opacity: 0.50, layers: [1]}).addTo(proposed);
+
+	getLegend(config.current.url);
+
 	//var overlayCurrent = L.esri.dynamicMapLayer(config.overlays.url, {opacity: 1});//.addTo(current);
 	//var overlayProposed = L.esri.dynamicMapLayer(config.udoService.url, {opacity: 1, layers: [3,4,5,6,7,8,9,10,11,12,13,14,15]});//.addTo(proposed);
 	locMarkersC = L.featureGroup().addTo(current);
