@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Wake County FEMA Comparison</title>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no, maximum-scale=1">
+	<!-- Bootstrap -->
+	<link href="css/bootstrap.min.css" rel="stylesheet">
+	<link href="css/typeahead.js-bootstrap.css" rel="stylesheet">
+	<link rel="stylesheet" type="text/css" href="css/main.css">
+
+	<!-- <link rel="stylesheet" href="http://js.arcgis.com/3.8/js/esri/css/esri.css"> -->
+  <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7.2/leaflet.css" />
+    <!-- Load Leaflet.markercluster -->
+    <link rel="stylesheet" href="css/MarkerCluster.css">
+    <link rel="stylesheet" href="css/MarkerCluster.Default.css">
+    <link href='//api.tiles.mapbox.com/mapbox.js/plugins/leaflet-locatecontrol/v0.24.0/L.Control.Locate.css' rel='stylesheet' />
+		<link rel="shortcut icon" href="img/favicon.ico">
+		<link rel="icon" type="image/ico" href="img/favicon.ico">
+
+		<script type="text/javascript">
+
+		  var _gaq = _gaq || [];
+		  _gaq.push(['_setAccount', 'UA-X-X']);
+		  _gaq.push(['_trackPageview']);
+
+		  (function() {
+		    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+		    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+		    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+		  })();
+
+		</script>
+  	<!--<script src="http://js.arcgis.com/3.8/"></script>-->
+	<!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+	<!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+      <script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
+      <![endif]-->
+
+
+  </head>
+  <body>
+<!--[if IE 8]>
+<div class="browser-warning warning-ie8">
+<p class="lead"><span class="glyphicon glyphicon-warning-sign"></span> You are using an outdated browser!</p>
+<p>It is recommended that this page be viewed in a modern browser such as <a href="http://www.google.com/chrome">Google Chrome</a>, <a href="http://www.mozilla.org/en-US/firefox/new/">Mozilla Firefox</a>, <a href="https://www.apple.com/safari/">Safari</a>, or <a href="http://windows.microsoft.com/en-us/internet-explorer/download-ie">Internet Explorer</a> 9 or above.  Most of these are supported on computers with Windows XP SP2+ installed.</p>
+<p>If your employer does not permit you to install software, please urge them to install one of these browsers for you.</p>
+<p><a href="http://browsehappy.com" class="btn btn-default">More Information</a></p><p><button id="closeWarning" class="btn btn-default" >Continue</button></p>
+<p>For questions please contact Raleigh GIS at <a href="mailto:gis@raleighnc.gov">gis@raleighnc.gov</a>.</p>
+</div>
+<![endif]-->
+<!--[if lt IE 8]>
+<div class="browser-warning warning-ie7"><p class="lead"><span class="glyphicon glyphicon-warning-sign"></span> You are using an outdated browser!</p>
+<p>It is recommended that this page be viewed in a modern browser such as <a href="http://www.google.com/chrome">Google Chrome</a>, <a href="http://www.mozilla.org/en-US/firefox/new/">Mozilla Firefox</a>, <a href="https://www.apple.com/safari/">Safari</a>, or <a href="http://windows.microsoft.com/en-us/internet-explorer/download-ie">Internet Explorer</a> 9 or above.  Most of these are supported on computers with Windows XP SP2+ installed.</p>
+<p>If your employer does not permit you to install software, please urge them to install one of these browsers for you.</p>
+<p><a href="http://browsehappy.com" class="btn btn-default">More Information</a></p><p><button id="closeWarning" class="btn btn-default" >Continue</button></p>
+<p>For questions please contact Raleigh GIS at <a href="mailto:gis@raleighnc.gov">gis@raleighnc.gov</a>.</p>
+</div>
+<![endif]-->
+  	<header class="navbar navbar-inverse navbar-fixed-top" role="banner">
+  		<div class="container">
+  			<div class="navbar-header">
+		      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar-collapse">
+		        <span class="sr-only">Toggle navigation</span>
+		        <span class="icon-bar"></span>
+		        <span class="icon-bar"></span>
+		        <span class="icon-bar"></span>
+		      </button>
+  				<a href="http://www.raleighnc.gov" target="_blank" class="navbar-brand">Wake County</a>
+  			</div>
+    		<div class="collapse navbar-collapse" id="navbar-collapse">
+					<ul class="nav navbar-nav navbar-right">
+		        <!-- <li><a href="http://www.raleighudo.us/" target="_blank">RaleighUDO.us</a></li>
+		        <li class="dropdown">
+		          <a href="#" class="dropdown-toggle" data-toggle="dropdown">Links <b class="caret"></b></a>
+		          <ul class="dropdown-menu">
+		            <li><a href="http://www.raleighnc.gov/business/content/Departments/Articles/PlanningandDevelopment.html" target="_blank">Planning &amp; Development</a></li>
+		            <li><a href="http://www.raleighnc.gov/business/content/PlanDev/Articles/DevServ/DevelopmentServices.html" target="_blank">Development Services</a></li>
+		            <li><a href="http://www.raleighnc.gov/content/PlanDev/Documents/DevServ/UDO/UDOCityWideRezoningMapAreas.pdf" target="_blank">Areas to be Rezoned Map</a></li>
+								<li class="divider"></li>
+								<li><a href="http://www.raleighnc.gov/content/extra/Books/PlanDev/UnifiedDevelopmentOrdinance/">Unified Development Ordinance</a></li>
+		          </ul>
+		        </li> -->
+		      </ul>
+				</div>
+  		</div>
+  	</header>
+    <div class="jumbotron hidden-xs">
+      <div class="header row">
+        <div class="col-sm-6">
+        <h2>FEMA Comparison</h2>
+        <span>Compare the current floodzone to the proposed floodzone.</span>
+        </div>
+        <div class="col-sm-2">
+        </div>
+        <div class="col-sm-4">
+          <a href="http://www.raleighnc.gov" target="_blank"><img class="pull-right" src="img/City-Seal-white.png" alt="Official City of Raleigh Seal"/></a>
+        </div>
+      </div>
+    </div>
+		<div class="jumbotron visible-xs">
+			<div class="row">
+				<div class="col-sm-12">
+				<h4>FEMA Comparison</h4>
+				<span>Compare the current floodzone to the proposed floodzone.</span>
+				</div>
+			</div>
+		</div>
+  	<div class="container">
+      <!--<div class="row alert alert-danger alert-dismissable">
+        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                We are experiencing issues with the software that controls this application.  Staff is currently working to address the issue, please try again later.
+      </div>-->
+  		<div id="searchBox" class="row well">
+  			<div class="col-sm-12">
+					<div class="col-sm-5">
+						<p>Search by <strong>address</strong> or <strong>PIN</strong> or <strong>click</strong> on the map</p>
+						<input id="searchInput" class="form-control" type="text" placeholder="222 West Hargett Street">
+						<span class="glyphicon glyphicon-question-sign" data-toggle="tooltip" data-placement="bottom" title="Please enter your street number and the first few letters of your street name and select your address from the list."></span>
+					</div>
+					<div id="addressAlert" class="col-sm-4 alert alert-info">
+						Selected Address: <strong></strong>
+					</div>
+					<div class="col-sm-3">
+						<div class="btn-group pull-right" style="margin-top:20px">
+							 <button type="button" class="btn btn-success dropdown-toggle pull-right" data-toggle="dropdown">Give Feedback<span class="caret"></span></button>
+
+							<ul class="dropdown-menu" role="menu">
+								<li data-modal="mapModal" style="display:none"><a href="javascript:void(0)"><strong>On the Map</strong></a></li>
+								<li data-modal="emailModal"><a href="javascript:void(0)">By Email</a></li>
+								<li data-modal="phoneModal"><a href="javascript:void(0)">By Phone</a></li>
+							</ul>
+						</div>
+					</div>
+  			</div>
+  		</div>
+  		<div class="row">
+          <div class="col-md-6">
+            <div class="panel panel-primary">
+              <div class="panel-heading">Effective</div>
+              <div class="panel-body">
+                  <div id="currentMap" class="map">
+
+                  </div>
+                  <div>
+                    <p class="lead">Floodzones</p>
+										<p id="currentDesc">No Address Specified</p>
+
+                    <div id="currentInfo">
+                    </div>
+                  </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="panel panel-primary">
+              <div class="panel-heading">Preliminary</div>
+              <div class="panel-body">
+
+                  <div id="proposedMap" class="map">
+
+                  </div>
+                  <div>
+                    <p class="lead">Floodzones</p>
+										<p id="proposedDesc">No Address Specified</p>
+                    <div id="proposedInfo">
+                    </div>
+                  </div>
+              </div>
+            </div>
+          </div>
+  		</div>
+
+  	</div>
+    <div class="footer well col-xs-12">
+      <div class="row">
+        <div class="col-md-3">
+					<!-- <center><a href="http://www.raleighudo.us" target="_blank"><img src="img/udo.png" style="height:70px;" alt="Raleigh UDO Logo"/></a></center> -->
+        </div>
+        <div class="col-md-6">
+          <center>
+            <p>Application developed by the City of Raleigh <a href="http://www.raleighnc.gov/business/content/ITechAdmin/Articles/GeographicInformationServices.html" target="_blank">Geographic Information Services</a> division.</p>
+            <p>Application developed for <a href="http://www.wakegov.com/environment" target="_blank"> Wake County Environmental Services</a>.</p>
+            <p>&copy; <script>document.write(new Date().getFullYear());</script></p>
+          </center>
+        </div>
+        <div class="col-md-3">
+         <center><a href="http://www.raleighnc.gov" target="_blank"><img src="img/City-seal-BW.png" alt="Official City of Raleigh Seal"/></a></center>
+        </div>
+      </div>
+    </div>
+  	<div id="mapModal" class="modal fade">
+  		<div class="modal-dialog">
+  			<div class="modal-content">
+  				<div class="modal-header">
+  					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+  					<h4 class="modal-title">Submit Feedback On Map</h4>
+  				</div>
+  				<div class="modal-body">
+  					<form class="form-horizontal" role="form">
+              <span id="required">*All Fields Required</span>
+  						<div class="form-group">
+  							<label class="col-sm-2 control-label">Location</label>
+  							<div class="col-sm-10" style="margin-top:6px">
+									<span id="location"></span>
+  							</div>
+  						</div>
+  						<div class="form-group">
+  							<label for="inputName" class="col-sm-2 control-label">Name</label>
+  							<div class="col-sm-10">
+  								<input type="text" class="form-control" id="inputName" name="name">
+  							</div>
+  						</div>
+  						<div class="form-group">
+  							<label for="inputEmail" class="col-sm-2 control-label">Email</label>
+  							<div class="col-sm-10">
+  								<input type="email" class="form-control" id="inputEmail" name="email">
+  							</div>
+  						</div>
+							<div class="form-group">
+								<label for="confirmEmail" class="col-sm-2 control-label">Confirm Email</label>
+								<div class="col-sm-10">
+									<input type="email" class="form-control" id="confirmEmail" name="confirmEmail">
+								</div>
+							</div>
+  						<div class="form-group">
+  							<label class="col-sm-2 control-label">Own this Property?</label>
+  							<div class="col-sm-10">
+                  <div class="btn-group" data-toggle="buttons" name="owner">
+                    <label class="btn btn-default active">
+                      <input type="radio" name="options" id="option1"> Yes
+                    </label>
+                    <label class="btn btn-default">
+                      <input type="radio" name="options" id="option2"> No
+                    </label>
+                  </div>
+  							</div>
+  						</div>
+  						<div class="form-group">
+  							<label for="typeSelect" class="col-sm-2 control-label">Comment Type</label>
+  							<div class="col-sm-10">
+  								<select class="form-control" id="typeSelect"></select>
+  							</div>
+  						</div>    																 <div class="form-group">
+  							<label for="commentArea" class="col-sm-2 control-label">Comment</label>
+  							<div class="col-sm-10">
+  								<textarea class="form-control" id="commentArea" rows="5" name="comment" maxlength="1000"></textarea>
+  							</div>
+  						</div>
+            <button id="formSubmit" type="submit" class="btn btn-success">Submit</button>
+  					</form>
+  				</div>
+  				<div class="modal-footer">
+            <p class="pull-left"><small>**We will keep this information private and only use it to contact you to follow up on your feedback.</small></p>
+						<p class="pull-left"><small>***We reserve the right to remove any obscene or offensive feedback.</small></p>
+  				</div>
+  			</div>
+  		</div>
+  	</div>
+
+  	<div id="emailModal" class="modal fade">
+  		<div class="modal-dialog">
+  			<div class="modal-content">
+  				<div class="modal-header">
+  					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+  					<h4 class="modal-title">Submit Feedback By Email</h4>
+  				</div>
+  				<div class="modal-body">
+  					If you would prefer to send your feedback via email, please send a message to <a href="mailto: rezoning@raleighnc.gov">rezoning@raleighnc.gov</a>.
+  				</div>
+  				<div class="modal-footer">
+
+  				</div>
+  			</div>
+  		</div>
+  	</div>
+  	<div id="phoneModal" class="modal fade">
+  		<div class="modal-dialog">
+  			<div class="modal-content">
+  				<div class="modal-header">
+  					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+  					<h4 class="modal-title">Submit Feedback By Phone</h4>
+  				</div>
+  				<div class="modal-body">
+  					If you would prefer to send your feedback via phone, please contact us at <br/>919-996-6363 (8am-5pm, Mon-Fri).
+  				</div>
+  				<div class="modal-footer">
+
+  				</div>
+  			</div>
+  		</div>
+  	</div>
+
+		<div id="warningModal" class="modal fade">
+			<div class="modal-dialog">
+				<div class="modal-content modal-warning">
+					<div class="modal-header modal-warning">
+						<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+						<h4 class="modal-title modal-warning">Location Required</h4>
+					</div>
+					<div class="modal-body">
+						A location must be set in order to send feedback, please either enter an address, click on a location on the map, or press the button beneath the zoom in and out buttons in the upper left corner of the map.  Then click on the Give Feedback On The Map option again.
+					</div>
+				</div>
+			</div>
+		</div>
+
+	<div id="popupModal" class="modal fade">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+					<h4 class="modal-title"></h4>
+				</div>
+				<div class="modal-body">
+
+				</div>
+				<div class="modal-footer">
+
+				</div>
+			</div>
+		</div>
+	</div>
+
+  	<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+  	<script src="https://code.jquery.com/jquery.js"></script>
+    <script type="text/javascript" src="js/jquery.validate.min.js"></script>
+
+  	<!-- Include all compiled plugins (below), or include individual files as needed -->
+  	<script src="js/bootstrap.min.js"></script>
+  	<script src="js/typeahead.bundle.min.js"></script>
+    <script src="js/bootstrap-maxlength.min.js"></script>
+    <script src="http://cdn.leafletjs.com/leaflet-0.7.2/leaflet.js"></script>
+    <script src="js/leaflet.markercluster.js"></script>
+		<script src="http://cdn.jsdelivr.net/leaflet.esri/1.0.0-rc.7/esri-leaflet.js"></script>
+
+		<script src="http://cdn-geoweb.s3.amazonaws.com/esri-leaflet-clustered-feature-layer/1.0.0-rc.4/esri-leaflet-clustered-feature-layer.js"></script>
+    <script src="js/L.Map.Sync.js"></script>
+    <script src='//api.tiles.mapbox.com/mapbox.js/plugins/leaflet-locatecontrol/v0.24.0/L.Control.Locate.js'></script>
+		<script src="js/moment.min.js"></script>
+		<script src="js/turf.min.js"></script>
+  	<script src="js/main.js"></script>
+  </body>
+  </html>

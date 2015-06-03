@@ -1,0 +1,50 @@
+[
+{"value": "0.2 PCT ANNUAL CHANCE FLOOD HAZARD",
+"label": "X - 0.2% Annual Chance Flood Hazard",
+"description": "Zone X is the flood insurance rate zones that correspond to areas outside the 1-percent annual chance floodplain – Areas protected from the 1-percent annual chance flood by levees. No Base Flood Elevations or depths are shown within this zone. Insurance purchase is not required in these zones."
+},
+{"value": "0.2 PCT ANNUAL CHANCE FLOOD HAZARD CONTAINED IN CHANNEL",
+"label": "X - 0.2% Annual Chance Flood Hazard Contained in Channel",
+"description": "Zone X is the flood insurance rate zones that correspond to areas outside the 1-percent annual chance floodplain – Areas protected from the 1-percent annual chance flood by levees. No Base Flood Elevations or depths are shown within this zone. Insurance purchase is not required in these zones."
+},
+{"value": "0.2 PCT ANNUAL CHANCE HAZARD",
+"label": "X - 0.2% Annual Chance Flood Hazard",
+"description": "Zone X is the flood insurance rate zones that correspond to areas outside the 1-percent annual chance floodplain – Areas protected from the 1-percent annual chance flood by levees. No Base Flood Elevations or depths are shown within this zone. Insurance purchase is not required in these zones."
+},
+{"value": "1 PCT ANNUAL CHANCE FLOOD HAZARD CONTAINED IN CHANNEL",
+"label": "AE - 1% Annual Chance Flood Hazard Contained in Channel",
+"description": "Zone AE is the flood insurance rate zones that correspond to the 1-percent annual chance floodplains that are determined in the Flood Insurance Study by detailed methods of analysis. In most instances, Base Flood Elevations derived from the detailed hydraulic analyses are shown at selected intervals within this zone. Mandatory flood insurance purchase requirements apply."
+},
+{"value": "1 PCT FUTURE CONDITIONS CONTAINED IN CHANNEL",
+"label": "AE - 1% Future Conditions  Contained in Channel",
+"description": "Zone AE is the flood insurance rate zones that correspond to the 1-percent annual chance floodplains that are determined in the Flood Insurance Study by detailed methods of analysis. In most instances, Base Flood Elevations derived from the detailed hydraulic analyses are shown at selected intervals within this zone. Mandatory flood insurance purchase requirements apply."
+},
+{"value": "A",
+"label": "A",
+"description": "Zone A is the flood insurance rate zone that corresponds to the 1-percent annual chance floodplains that are determined in the Flood Insurance Study by approximate methods of analysis. Because detailed hydraulic analyses are not performed for such areas, no Base Flood Elevations or depths are shown within this zone. Mandatory flood insurance purchase requirements apply."
+},
+{"value": "AE",
+"label": "AE",
+"description": "Zone AE is the flood insurance rate zones that correspond to the 1-percent annual chance floodplains that are determined in the Flood Insurance Study by detailed methods of analysis. In most instances, Base Flood Elevations derived from the detailed hydraulic analyses are shown at selected intervals within this zone. Mandatory flood insurance purchase requirements apply."
+},
+{"value": "AH",
+"label": "AH",
+"description": "Zone AH is the flood insurance rate zone that corresponds to the areas of 1-percent annual chance shallow flooding with a constant water-surface elevation (usually areas of ponding) where average depths are between 1 and 3 feet. The Base Flood Elevations derived from the detailed hydraulic analyses are shown at selected intervals within this zone. Mandatory flood insurance purchase requirements apply. "
+},
+{"value": "A0",
+"label": "AO",
+"description": "Zone AO is the flood insurance rate zone that corresponds to the areas of 1-percent shallow flooding (usually sheet flow on sloping terrain) where average depths are between 1 and 3 feet. Average flood depths derived from the detailed hydraulic analyses are shown within this zone. In addition, alluvial fan flood hazards are shown as Zone AO on the Flood Insurance Rate Map. Mandatory flood insurance purchase requirements apply."
+},
+{"value": "AO",
+"label": "AO",
+"description": "Zone AO is the flood insurance rate zone that corresponds to the areas of 1-percent shallow flooding (usually sheet flow on sloping terrain) where average depths are between 1 and 3 feet. Average flood depths derived from the detailed hydraulic analyses are shown within this zone. In addition, alluvial fan flood hazards are shown as Zone AO on the Flood Insurance Rate Map. Mandatory flood insurance purchase requirements apply."
+},
+{"value": "VE",
+"label": "VE",
+"description": "Zone VE is the flood insurance rate zone that corresponds to areas within the 1-percent annual chance coastal floodplain that have additional hazards associated with storm waves. Base Flood Elevations derived from the detailed hydraulic analyses are shown at selected intervals within this zone. Mandatory flood insurance purchase requirements apply."
+},
+{"value": "X",
+"label": "X",
+"description": "Zone X is the flood insurance rate zones that correspond to areas outside the 1-percent annual chance floodplain – Areas protected from the 1-percent annual chance flood by levees. No Base Flood Elevations or depths are shown within this zone. Insurance purchase is not required in these zones."
+}
+]
