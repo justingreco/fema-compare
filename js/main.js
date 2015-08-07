@@ -1,6 +1,6 @@
 var config = {
 	feedbackLayer: {
-		url: "http://maps.raleighnc.gov/arcgis/rest/services/Planning/UDO_Feedback/FeatureServer/0"
+		url: "http://maps.wakegov.com/arcgis/rest/services/Environmental/FloodplainFeedbackEFS/FeatureServer/0"
 	},
 	current: {
 		url: "http://iriskgis.ncem.org/arcgis/rest/services/FRIS_FloodZones/MapServer",
@@ -44,13 +44,13 @@ $(document).ready(function () {
 	legend = {};
 
 	function setMapView(point) {
-		current.setView([point.y, point.x], 16);
-		proposed.setView([point.y, point.x], 16);
+		current.setView(point, 17);
+		proposed.setView(point, 17);
 	}
 
 	function getInfo(point) {
 		info = {};
-		_gaq.push(['_trackEvent', 'Search', 'Location', '"coordinates":['+point.x+', '+point.y+']']);
+		//_gaq.push(['_trackEvent', 'Search', 'Location', '"coordinates":['+point.x+', '+point.y+']']);
 		updateLocation(point);
 		updateLocationMarkers(point);
 		searchParcel(point);
@@ -58,8 +58,8 @@ $(document).ready(function () {
 
 	function mapClickHandler (e) {
 		lastAction = "click";
-		var point = {x: e.latlng.lng, y: e.latlng.lat};
-		_gaq.push(['_trackEvent', 'Search', 'Type', 'Map Click']);
+		var point = [e.latlng.lng, e.latlng.lat];
+		//_gaq.push(['_trackEvent', 'Search', 'Type', 'Map Click']);
 		getInfo(point);
 	}
 
@@ -80,38 +80,25 @@ $(document).ready(function () {
 		$("#addressAlert strong").text(address);
 	}
 
-	function retrievedParcel(data) {
-		$("#searchInput").typeahead('val', '');
-		if (data.results.length > 0) {
-			var geom = data.results[0].geometry;
-				addressText = data.results[0].attributes['Site Address'];
-				updateLocationText();
-				propGj = L.esri.Util.arcgisToGeojson(data.results[0].geometry);
-				L.geoJson(propGj).addTo(locMarkersC);
-				L.geoJson(propGj).addTo(locMarkersP);
-				getCurrentFema (propGj);
-			} else {
-				if (lastAction === "click") {
-					addressText = "Right-of-Way";
+	function searchParcel(point) {
+		L.esri.Tasks.query({url: config.parcels.url + '/0'})
+			.contains(L.latLng(point[1], point[0]))
+			.run(function (error, featureCollection) {
+				if (featureCollection.features.length > 0) {
+					propGj = featureCollection.features[0];
+					addressText = featureCollection.features[0].properties['Site Address'];
+					updateLocationText();
+					L.geoJson(featureCollection).addTo(locMarkersC);
+					L.geoJson(featureCollection).addTo(locMarkersP);
+					getCurrentFema(featureCollection);
+					proposed.fitBounds(L.geoJson(featureCollection).getBounds());	
+				} else {
+					if (lastAction === "click") {
+						addressText = "Right-of-Way";
+					}
+					updateLocationText();
 				}
-				updateLocationText();
-			}
-		}
-		function searchParcel(point) {
-			$.ajax({url: config.parcels.url + "/identify",
-			dataType: "json",
-			data: {
-				geometry: point.x + ',' + point.y,
-				geometryType: 'esriGeometryPoint',
-				sr: 4236,
-				tolerance: 3,
-				layers: "all:0,1",
-				mapExtent: point.x-1 +","+point.y-1+","+point.x+1+","+point.y+1,
-				imageDisplay: proposed.getSize().x+","+ proposed.getSize().y+",96",
-				returnGeometry: true,
-				f: "json"
-			}
-		}).done(retrievedParcel);
+			});
 	}
 	function getCurrentFema (gj) {
 		currentInfo = [];
@@ -169,10 +156,7 @@ $(document).ready(function () {
 			});
 			currentInfo = currentInfo.sort(compare);
 			prelimInfo = prelimInfo.sort(compare);
-
 			reportInfo(currentInfo, prelimInfo);
-			console.log(currentInfo);
-			console.log(prelimInfo);
 		});
 	}
 
@@ -250,9 +234,9 @@ $(document).ready(function () {
 			iconSize: [14,14]
 		});
 		locMarkersC.clearLayers();
-		locMarkersC.addLayer(L.marker([point.y, point.x], {icon:icon}));
+		locMarkersC.addLayer(L.marker(point, {icon:icon}));
 		locMarkersP.clearLayers();
-		locMarkersP.addLayer(L.marker([point.y, point.x], {icon:icon}));
+		locMarkersP.addLayer(L.marker(point, {icon:icon}));
 	}
 
 	function updateLocationText() {
@@ -260,16 +244,14 @@ $(document).ready(function () {
 		showAddressAlert(addressText);
 	}
 	function updateLocation (point) {
-		var lngLat = [point.x, point.y];
 		mapPoint = point;
-		//$("#locMessage").text(Math.round(lngLat[1]* 1000)/1000 + ", " + Math.round(lngLat[0]* 1000)/1000);
 		updateLocationMarkers(point);
 		updateLocationText();
 		$("#addPointButton").html('	Change  <span class="glyphicon glyphicon-pushpin"></span>');
 	}
 
 	function setLocationHandler (e) {
-		updateLocation({x: e.latlng.lng, y: e.latlng.lat});
+		updateLocation(e.latlng)
 		$("#mapModal").modal("toggle");
 		proposed.off("click", setLocationHandler);
 		$("#currentMap").css("opacity", 1);
@@ -285,58 +267,18 @@ $(document).ready(function () {
 
 	function displayPoint (point, type) {
 		lastAction = "search";
-		_gaq.push(['_trackEvent', 'Search', type]);
+		//_gaq.push(['_trackEvent', 'Search', type]);
+		console.log(point);
 		getInfo(point);
-		setMapView(point);
 	}
-	function searchByAddress (data) {
-		$.ajax({
-			url: config.addresses.url + "/1/query",
-			type: 'GET',
-			dataType: 'json',
-			data: {f: 'json',
-			where: "ADDRESS = '" + data.value + "'",
-			returnGeometry: true,
-			outSR: 4326
-		},
-	})
-	.done(function(data) {
-		if (data.features.length > 0) {
-			var point = data.features[0].geometry;
+function searchByAddress (data) {
+	L.esri.Tasks.query({url: config.addresses.url + "/1"}).where("ADDRESS = '" + data.value + "'").run(function (error, featureCollection, response) {
+		if (featureCollection.features.length > 0) {
+			var point = featureCollection.features[0].geometry.coordinates;
 			displayPoint(point, "Address");
 		}
 	});
 }
-
-/*function searchByPIN (data) {
-	$.ajax({
-		url: config.parcels.url + "/0/query",
-		type: 'GET',
-		dataType: 'json',
-		data: {f: 'json',
-		where: "PIN_NUM = '" + data.value + "'",
-		returnGeometry: true,
-		outSR: 4326
-	},
-})
-.done(function(data) {
-	$.ajax({
-		url: config.geometry.url + '/labelPoints',
-		type: 'POST',
-		dataType: 'json',
-		data: {f: 'json',
-		polygons: '[' + JSON.stringify(data.features[0].geometry) + ']',
-		sr: 4326
-	},
-})
-.done(function(data) {
-	if (data.labelPoints.length > 0) {
-		var point = data.labelPoints[0];
-		displayPoint(point, 'PIN');
-	}
-});
-});
-}*/
 
 function typeaheadSelected (obj, data, dataset) {
 	if (dataset === "Addresses") {
@@ -355,16 +297,6 @@ function addressFilter (resp) {
 	return data;
 }
 
-/*function pinFilter (resp) {
-	var data = []
-	if (resp.features.length > 0) {
-		$(resp.features).each(function (i, f) {
-			data.push({value:f.attributes.PIN_NUM});
-		});
-	}
-
-	return data;
-}*/
 function setTypeahead () {
 	var addresses = new Bloodhound({
 		datumTokenizer: function (datum) {
@@ -380,34 +312,12 @@ function setTypeahead () {
 			}
 		}
 	});
-/*	var pin = new Bloodhound({
-		datumTokenizer: function (datum) {
-			return Bloodhound.tokenizers.whitespace(datum.value);
-		},
-		queryTokenizer: Bloodhound.tokenizers.whitespace,
-		remote: {
-			url: config.parcels.url + "/1/query?orderByFields=PIN_NUM&returnGeometry=false&outFields=PIN_NUM&returnDistinctValues=true&f=json",
-			filter: pinFilter,
-			replace: function (url, uriEncodedQuery) {
-				var newUrl = url + "&where=PIN_NUM LIKE '" + uriEncodedQuery + "%' OR PIN_NUM LIKE '0" + parseInt(uriEncodedQuery).toString() + "%'";
-				return newUrl;
-			}
-		}
-	});*/
+
 	addresses.initialize();
-	//pin.initialize();
 	$("#searchInput").typeahead({hint: true, highlight: true, minLength: 1},
 		{name:'Addresses',
 		displayKey:'value',
-		source:addresses.ttAdapter()/*,
-		templates: {
-			header: "<h5>Addresses</h5>"
-		}*/}/*,
-		{name:'PIN',
-		displayKey:'value',
-		source:pin.ttAdapter(),
-		templates: {
-			header: "<h5>PIN</h5>"
+		source:addresses.ttAdapter()}
 		}}*/).on("typeahead:selected", typeaheadSelected);
 	};
 
@@ -441,42 +351,25 @@ function setTypeahead () {
 		$('.help-block', group).remove();
 	}
 
-	function submitForm () {
-		var edit = {geometry: mapPoint,
-			attributes: {
-				"NAME":$("#inputName").val(),
-				"EMAIL":$("#inputEmail").val(),
-				"ADDRESS":$("#location").text(),
-				"OWN":$('.btn-group[name="owner"]>label.active').index(),
-				"FEEDBACK":$("#commentArea").val(),
-				"TYPE":$("option:selected", "#typeSelect").val(),
-				"PROPOSED":$("#proposedDesc span").text(),
-				"EXISTING":$("#currentDesc span").text()
-			}
-		};
-		$.ajax({
-			url: config.feedbackLayer.url + '/addFeatures',
-			type: 'POST',
-			dataType: 'json',
-			data: {f: 'json',
-			features: JSON.stringify([edit])
+function submitForm () {
+	var edit = {
+	    "type": "Feature",
+	    "properties": {
+			"NAME":$("#inputName").val(),
+			"EMAIL":$("#inputEmail").val(),
+			"ADDRESS":$("#location").text(),
+			"OWN":$('.btn-group[name="owner"]>label.active').index(),
+			"FEEDBACK":$("#commentArea").val(),
+			"TYPE":$("option:selected", "#typeSelect").val()
 		},
-	})
-	.done(function(e) {
-		var result = e.addResults[0];
+	    "geometry": {
+	        "type": "Point",
+	        "coordinates": mapPoint
+	    }
+	};
+
+	feedbackLayer.addFeature(edit, function (error, result) {
 		if (result.success) {
-			$.ajax({
-				url: "php/mail.php",
-				type: "GET",
-				data: {
-					name: $("#inputName").val(),
-					email: $("#inputEmail").val(),
-					type: $("option:selected", "#typeSelect").text(),
-					feedback: $("#commentArea").val(),
-					location: $("#location").text(),
-					id: result.objectId
-				}
-			});
 			$("#mapModal").modal("toggle");
 			$("#inputName").val("");
 			$("#inputEmail").val("");
@@ -487,7 +380,6 @@ function setTypeahead () {
 			locMarkersC.clearLayers();
 			feedbackLayer.refresh();
 		}
-
 	});
 }
 
