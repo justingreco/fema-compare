@@ -9,9 +9,9 @@
 		$date = date("F jS Y, h:i a");
 		$headers = 'MIME-Version: 1.0' . "\r\n" .
 			"Content-type: text/html; charset=iso-8859-1\r\n" .
-			'From: rezoning@raleighnc.gov' . "\r\n" .
-			'Reply-To: rezoning@raleighnc.gov' . "\r\n" .
-			'Bcc: rezoning@raleighnc.gov' . "\r\n" .
+			'From: gis@raleighnc.gov' . "\r\n" .
+			'Reply-To: gis@raleighnc.gov' . "\r\n" .
+			'Bcc: gis@raleighnc.gov' . "\r\n" .
 			'X-Mailer: PHP/' .phpversion();
 
 		$message = '
@@ -25,7 +25,6 @@
 				Feedback Received '.$date.'<br/>
 				Reference #: '.$id.'<br/>
         		Location: '.$location.'<br/>
-        		Comment Type: '.$type.'<br/>
         		Comment: '.$feedback.'<br/>
         		<hr/>
         		<p>Thanks for your time,</p>
@@ -37,5 +36,6 @@
 			</body>
 		</html>
 		';
-		mail($email, "City of Raleigh Feedback Ref #".$id, $message, $headers);
+		mail($email, "FEMA Feedback Ref #".$id, $message, $headers);
+
 ?>

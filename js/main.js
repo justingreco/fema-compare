@@ -20,6 +20,9 @@ var config = {
   addresses: {
     url: "http://maps.raleighnc.gov/arcgis/rest/services/Addresses/MapServer"
   },
+  jurisdictions: {
+  	url: "http://maps.raleighnc.gov/arcgis/rest/services/Planning/Jurisdictions/MapServer/1"
+  },
   geometry: {
     url: "http://maps.raleighnc.gov/arcgis/rest/services/Utilities/Geometry/GeometryServer"
   }
@@ -79,17 +82,19 @@ $(document).ready(function () {
       if (featureCollection.features.length > 0) {
         propGj = featureCollection.features[0];
         addressText = featureCollection.features[0].properties['SITE_ADDRESS'];
-        updateLocationText();
+        updateLocationText('info', addressText);
         L.geoJson(featureCollection).addTo(locMarkersC);
         L.geoJson(featureCollection).addTo(locMarkersP);
         getCurrentFema(featureCollection);
         proposed.fitBounds(L.geoJson(featureCollection).getBounds());
+        updateLocationText();
       } else {
         if (lastAction === "click") {
-          addressText = "Right-of-Way";
+          addressText = "";
           clearAllInfo();
+          updateLocationText('danger', 'Location not on a property');
         }
-        updateLocationText();
+
       }
     });
   }
@@ -218,14 +223,14 @@ $(document).ready(function () {
     locMarkersP.clearLayers();
     locMarkersP.addLayer(L.marker([point[1], point[0]], {icon:icon}));
   }
-  function updateLocationText() {
+  function updateLocationText(style, text) {
     $("#location").html(addressText);
     showAddressAlert(addressText);
   }
   function updateLocation (point) {
     mapPoint = point;
     updateLocationMarkers(point);
-    updateLocationText();
+    updateLocationText('info', addressText);
     $("#addPointButton").html('	Change  <span class="glyphicon glyphicon-pushpin"></span>');
   }
   function setLocationHandler (e) {
@@ -317,6 +322,59 @@ $(document).ready(function () {
     var group = $(element).closest('.form-group div').removeClass("has-error");
     $('.help-block', group).remove();
   }
+
+  function sendEmail (email, name, oid) {
+  	$.ajax({
+  		url: 'php/mail.php',
+  		type: 'GET',
+  		data: {
+  			name: name,
+  			email: email,
+  			feedback: $("#commentArea").val(),
+  			location: $("#location").text(),
+  			id: oid
+  		},
+  	})
+  	.done(function() {
+  		console.log("success");
+  	})
+  	.fail(function() {
+  		console.log("error");
+  	})
+  	.always(function() {
+  		console.log("complete");
+  	});
+  	
+  }
+
+  function getContactEmail (etj, oid) {
+  	$.getJSON("json/contacts.json", function (data) {
+  		var contact = data.filter(function (contact) {
+  			return contact.jurisdiction === etj;
+  		});
+  		if (contact.length > 0) {
+  			contact = contact[0];
+  			console.log(contact);
+  			sendEmail(contact.email, contact.name, oid);
+  		}
+  	});
+  }
+
+  function getContact (oid) {
+  	L.esri.Tasks.query({url: config.jurisdictions.url})
+  		.contains(L.latLng(mapPoint[1], mapPoint[0]))
+  		.returnGeometry(false)
+  		.fields('JURISDICTION')
+  		.run(function (error, featureCollection) {
+  			var etj = "";
+  			if (featureCollection.features.length > 0) {
+  				etj = featureCollection.features[0].properties.JURISDICTION;
+  				getContactEmail(etj, oid);
+  			} else {
+  				sendEmail('Betsy.Pearce@wakegov.com', 'Betsy Pearce', oid);
+  			}
+  		});
+  }
   function submitForm () {
     var edit = {
       "type": "Feature",
@@ -343,7 +401,8 @@ $(document).ready(function () {
         $("#typeSelect").prop("selectedIndex", 0);
         locMarkersP.clearLayers();
         locMarkersC.clearLayers();
-        feedbackLayer.refresh();
+        //feedbackLayer.refresh();
+        getContact(result.objectId);
       }
     });
   }
@@ -412,8 +471,8 @@ $(document).ready(function () {
     } else {
       popup.append("<strong>Feedback </strong><span>"+feature.properties.FEEDBACK+"<br/>");
     }
-    if (feature.properties.CREATE_DATE) {
-      var submitted = moment(new Date(feature.properties.CREATE_DATE)).format('MMMM Do YYYY, h:mm a');
+    if (feature.properties.CREATED_DATE) {
+      var submitted = moment(new Date(feature.properties.CREATED_DATE)).format('MMMM Do YYYY, h:mm a');
       popup.append("<strong>Submitted</strong> "+submitted.toString()+"<br/>");
     }
     if (feature.properties.RESPONDED) {
@@ -427,7 +486,7 @@ $(document).ready(function () {
       }
     }
     if (feature.properties.RESPONSE_DATE) {
-      if (feature.properties.RESPONSE_DATE != feature.properties.CREATE_DATE){
+      if (feature.properties.RESPONSE_DATE != feature.properties.CREATED_DATE){
         var responded = moment(new Date(feature.properties.RESPONSE_DATE)).format('MMMM Do YYYY, h:mm a');
         popup.append("<strong>Responded</strong> "+responded.toString());
       }
@@ -504,35 +563,17 @@ $(document).ready(function () {
   });
   var template = "<strong>Category</strong> {TYPE} <br/><strong>Feedback</strong> {FEEDBACK}";
   feedbackLayer = L.esri.clusteredFeatureLayer(config.feedbackLayer.url,{
-    where: "DISPLAY = 1 OR DISPLAY IS NULL",
-    cluster: new L.MarkerClusterGroup({
-      iconCreateFunction: function(cluster) {
-        var count = cluster.getChildCount();
-        var digits = (count+"").length;
-        return new L.DivIcon({
-          html: count,
-          className:"cluster digits-"+digits,
-          iconSize: null
-        });
-      }
-    }),
-    createMarker: function (geojson, latlng) {
-/*      var responded = (geojson.properties.RESPONDED) ? geojson.properties.RESPONDED: 0;
-      return L.marker(latlng, {
-        icon: icons[responded]
-      });*/
-    },
-    onEachMarker: function (feature, layer) {
-      //layer.bindPopup(buildPopup(feature)[0]);
-    }}).addTo(proposed);
+    where: "DISPLAY = 1 OR DISPLAY IS NULL"}).addTo(proposed);
 
   	feedbackLayer.bindPopup(function (feature) {
-  		if (feature.properties.CREATE_DATE) {
-  			feature.properties.CREATE_DATE = moment(new Date(feature.properties.CREATE_DATE)).format('MMMM Do YYYY, h:mm a');
+  		var createDate = "";
+  		if (feature.properties.CREATED_DATE) {
+  			createDate = moment(new Date(feature.properties.CREATED_DATE)).format('MMMM Do YYYY, h:mm a');
+  		} else {
+  			createDate = moment(Date.now()).format('MMMM Do YYYY, h:mm a');
   		}
-	    return L.Util.template('<strong>Feedback </strong>{FEEDBACK}<br/><strong>Submitted </strong>{CREATE_DATE}', feature.properties);
+	    return L.Util.template('<strong>Feedback </strong>{FEEDBACK}<br/><strong>Submitted </strong>' + createDate, feature.properties);
   	});
-    //.on('metadata', feedbackLayerLoaded);
     L.control.layers({}, {'Flood Hazard Areas': currentLayer}).addTo(current);
     L.control.layers({}, {'Flood Hazard Areas': prelimLayer, 'Floodway Changes': changeLayer,'Feedback': feedbackLayer}).addTo(proposed);
     var lcP = L.control.locate().addTo(proposed);
@@ -540,16 +581,16 @@ $(document).ready(function () {
     proposed.on("locationfound", function (location){
       lastAction = "click";
       lcP.stopLocate();
-      var point = {x: location.latlng.lng, y: location.latlng.lat};
-      _gaq.push(['_trackEvent', 'Search', 'Type', 'Geolocation']);
+      var point = [location.latlng.lng, location.latlng.lat];
+      //_gaq.push(['_trackEvent', 'Search', 'Type', 'Geolocation']);
       getInfo(point);
       setMapView(point);
     });
     current.on("locationfound", function (location){
       lastAction = "click";
       lcC.stopLocate();
-      var point = {x: location.latlng.lng, y: location.latlng.lat};
-      _gaq.push(['_trackEvent', 'Search', 'Type','Geolocation']);
+      var point = [location.latlng.lng, location.latlng.lat];
+      //_gaq.push(['_trackEvent', 'Search', 'Type','Geolocation']);
       getInfo(point);
       setMapView(point)
     });
