@@ -21,10 +21,10 @@ var config = {
     url: "http://maps.raleighnc.gov/arcgis/rest/services/Addresses/MapServer"
   },
   jurisdictions: {
-  	url: "http://maps.raleighnc.gov/arcgis/rest/services/Planning/Jurisdictions/MapServer/1"
+  	url: "http://maps.wakegov.com/arcgis/rest/services/Jurisdictions/PlanningJurisdictions/MapServer/0"
   },
   geometry: {
-    url: "http://maps.raleighnc.gov/arcgis/rest/services/Utilities/Geometry/GeometryServer"
+    url: "http://maps.wakegov.com/arcgis/rest/services/Utilities/Geometry/GeometryServer"
   }
 }
 $(document).ready(function () {
@@ -87,7 +87,7 @@ $(document).ready(function () {
         L.geoJson(featureCollection).addTo(locMarkersP);
         getCurrentFema(featureCollection);
         proposed.fitBounds(L.geoJson(featureCollection).getBounds());
-        updateLocationText();
+       // updateLocationText();
       } else {
         if (lastAction === "click") {
           addressText = "";
@@ -225,12 +225,17 @@ $(document).ready(function () {
   }
   function updateLocationText(style, text) {
     $("#location").html(addressText);
-    showAddressAlert(addressText);
+    if (style === "info") {
+      $("#addressAlert").removeClass('alert-danger').addClass('alert-info');
+    } else if (style === "danger") {
+      $("#addressAlert").removeClass('alert-info').addClass('alert-danger');
+    }
+    showAddressAlert(text);
   }
   function updateLocation (point) {
     mapPoint = point;
     updateLocationMarkers(point);
-    updateLocationText('info', addressText);
+    //updateLocationText('info', addressText);
     $("#addPointButton").html('	Change  <span class="glyphicon glyphicon-pushpin"></span>');
   }
   function setLocationHandler (e) {
@@ -323,13 +328,14 @@ $(document).ready(function () {
     $('.help-block', group).remove();
   }
 
-  function sendEmail (email, name, oid) {
+  function sendEmail (contact, name, oid) {
   	$.ajax({
   		url: 'php/mail.php',
   		type: 'GET',
   		data: {
   			name: name,
-  			email: email,
+        email: $("#inputEmail").val(),
+  			contact: contact,
   			feedback: $("#commentArea").val(),
   			location: $("#location").text(),
   			id: oid
@@ -342,7 +348,15 @@ $(document).ready(function () {
   		console.log("error");
   	})
   	.always(function() {
-  		console.log("complete");
+  		console.log("complete");       
+        $("#mapModal").modal("toggle");
+        $("#inputName").val("");
+        $("#inputEmail").val("");
+        $("#confirmEmail").val("");
+        $("#commentArea").val("");
+        $("#typeSelect").prop("selectedIndex", 0);
+        locMarkersP.clearLayers();
+        locMarkersC.clearLayers();
   	});
   	
   }
@@ -393,14 +407,6 @@ $(document).ready(function () {
     };
     feedbackLayer.addFeature(edit, function (error, result) {
       if (result.success) {
-        $("#mapModal").modal("toggle");
-        $("#inputName").val("");
-        $("#inputEmail").val("");
-        $("#confirmEmail").val("");
-        $("#commentArea").val("");
-        $("#typeSelect").prop("selectedIndex", 0);
-        locMarkersP.clearLayers();
-        locMarkersC.clearLayers();
         //feedbackLayer.refresh();
         getContact(result.objectId);
       }
