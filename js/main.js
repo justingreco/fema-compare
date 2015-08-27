@@ -209,7 +209,7 @@ $(document).ready(function () {
     }
     $(info).each(function (i, data) {
       div.append('<p class="lead">' + data.label + '</p>');
-      div.append('<p>' + (data.area * 0.000247105).toFixed(2) + ' acres ' + getDifferenceLabel(data) + '</p>');
+      div.append('<p>' + (data.area * 0.000247105).toFixed(2) + ' acres ' /*+ getDifferenceLabel(data)*/ + '</p>');
       div.append('<p>' + data.description + '</p>');
     });
   }
@@ -354,7 +354,7 @@ $(document).ready(function () {
         $("#inputEmail").val("");
         $("#confirmEmail").val("");
         $("#commentArea").val("");
-        $("#typeSelect").prop("selectedIndex", 0);
+/*        $("#typeSelect").prop("selectedIndex", 0);*/
         locMarkersP.clearLayers();
         locMarkersC.clearLayers();
   	});
@@ -397,8 +397,8 @@ $(document).ready(function () {
         "EMAIL":$("#inputEmail").val(),
         "ADDRESS":$("#location").text(),
         "OWN":$('.btn-group[name="owner"]>label.active').index(),
-        "FEEDBACK":$("#commentArea").val(),
-        "TYPE":$("option:selected", "#typeSelect").val()
+        "FEEDBACK":$("#commentArea").val()/*,
+        "TYPE":$("option:selected", "#typeSelect").val()*/
       },
       "geometry": {
         "type": "Point",
