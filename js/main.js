@@ -292,7 +292,7 @@ $(document).ready(function () {
         filter: addressFilter,
         replace: function(url, uriEncodedQuery) {
           var newUrl = url + '&where=ADDRESS like ' + "'" + uriEncodedQuery.toUpperCase() +"%'";
-          return newUrl;
+          return encodeURI(newUrl);
         }
       }
     });
